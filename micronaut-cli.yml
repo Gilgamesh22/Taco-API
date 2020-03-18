@@ -1,0 +1,5 @@
+profile: service
+defaultPackage: taco.api
+---
+testFramework: kotlintest
+sourceLanguage: kotlin
