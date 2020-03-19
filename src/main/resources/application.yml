@@ -1,3 +1,15 @@
 micronaut:
   application:
     name: taco-api
+
+micronaut:
+  io:
+    watch:
+      paths: src/main
+      restart: true
+
+micronaut:
+  codec:
+    json:
+      additionalTypes:
+        - text/javascript
