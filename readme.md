@@ -1,4 +1,4 @@
-# Taco APi
+# Taco API
 
 ## Building
 
