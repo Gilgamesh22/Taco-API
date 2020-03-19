@@ -1,6 +1,6 @@
 version: '3.4'
 services:
-  taco-api:
+  build:
     build:
       context: .
       dockerfile: dev.dockerfile
@@ -10,3 +10,4 @@ services:
       - "80:8080"
     volumes:
       - .:/code:rw
+    command: ./gradlew build
