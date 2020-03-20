@@ -54,6 +54,6 @@ if you want to run on host simply run
 
 ## View the api
 
-to view the api endpoints of the app simply go to `localhost/swagger` while the app is running.
+to view the api endpoints of the app simply go to `localhost/swagger-ui` while the app is running.
 
 you can also view the api using `localhost/redoc` and `localhost/rapidoc`
