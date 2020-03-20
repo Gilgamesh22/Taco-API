@@ -2,34 +2,37 @@
 
 ## Building
 
-To build simply run 
-```
+To build simply run
+
+```bash
 ./gradlew build
 ```
 
-if you want to containerize your build run 
-```
+if you want to containerize your build run
+
+```bash
 docker-compose up build
 ```
 
 ## Image
 
-if you would like to Image for production simply run 
-```
-docker build -f prod.dockerfile -t taco-api:semantic_version
+if you would like to Image for production simply run
+
+```bash
+docker build -f prod.dockerfile -t taco-api:semantic_version .
 ```
 
 remember to replace `semantic_version` with an actual version
 
 ## Run In Production
 
-to run in production you can simply use docker 
+to run in production you can simply use docker
 
 ```bash
 docker run -p 80:8080 znackasha/taco-api
 ```
 
-or you can run the jar directly 
+or you can run the jar directly
 
 ```bash
 PORT=80 java -jar ./build/libs/taco-api-0.1-all.jar
@@ -37,12 +40,20 @@ PORT=80 java -jar ./build/libs/taco-api-0.1-all.jar
 
 ## Run for development
 
-if you want to containerize your run the following first 
-```
-docker-compose up build bash
+if you want to containerize your run
+
+```bash
+docker-compose up run
 ```
 
-To run simply run 
-```
+if you want to run on host simply run
+
+```bash
 ./gradlew run
 ```
+
+## View the api
+
+to view the api endpoints of the app simply go to `localhost/swagger` while the app is running.
+
+you can also view the api using `localhost/redoc` and `localhost/rapidoc`
