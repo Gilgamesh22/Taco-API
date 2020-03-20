@@ -52,6 +52,20 @@ if you want to run on host simply run
 ./gradlew run
 ```
 
+## Run test
+
+if you want to containerize your run
+
+```bash
+docker-compose run run ./gradlew --no-daemon test
+```
+
+if you want to run on host simply run
+
+```bash
+./gradlew test
+```
+
 ## View the api
 
 to view the api endpoints of the app simply go to `localhost/swagger-ui` while the app is running.
