@@ -8,31 +8,25 @@ import javax.validation.constraints.Digits
 import javax.validation.constraints.NotBlank
 import javax.validation.constraints.NotEmpty
 import javax.validation.constraints.NotNull
+import javax.validation.constraints.*
 
+import io.swagger.v3.oas.annotations.media.Schema
 
-@Introspected
-class MenuItem {
+//@Introspected
+@Schema(name="MenuItem", description="Menu Item in shopping cart")
+open class MenuItem {
 
     @NotBlank
     @NotEmpty(message = "Please enter name")
-    protected val name : String? = null;
+    @Schema(description="The name of the menu item")
+    val name : String = "";
 
-    @Digits(integer=10, fraction=2)
     @NotNull(message = "Please enter price")
-    protected val price : BigDecimal? = null;
+    @Schema(description="The price of the menu item")
+    @Digits(integer=10, fraction=2)
+    val price : BigDecimal = BigDecimal("0.0");
 
     @NotNull(message = "Please enter the quantity")
-    protected val quantity : Int? = null;
-
-    fun name(): String {
-        return this.name!!
-    }
-
-    fun price(): BigDecimal {
-        return this.price!!
-    }
-
-    fun quantity(): Int {
-        return this.quantity!!
-    }
+    @Schema(description="The quantity the user would like to purchase")
+    val quantity : Int = 0;
 }

@@ -17,7 +17,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @Validated
-@Controller("/menu-total") 
+@Controller("/order-total") 
 class OrderTotalController {
 
     @Post("/")
@@ -25,12 +25,12 @@ class OrderTotalController {
 
         // calculate the price of the cart
         var totalPrice : BigDecimal = menuItems
-                        .map { it.price().multiply(BigDecimal(it.quantity())) }
+                        .map { it.price.multiply(BigDecimal(it.quantity)) }
                         .reduce { total, price -> total.add(price) }
 
         // calculate number of items in cart
         var numItems : Int = menuItems
-                        .map { it.quantity() }
+                        .map { it.quantity }
                         .reduce { total, quantity -> total + quantity }
 
         // apply 20% discount if the number of times equals or grater then 4

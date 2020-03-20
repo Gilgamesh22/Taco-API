@@ -6,8 +6,17 @@ services:
       dockerfile: dev.dockerfile
       target: micronaut
     working_dir: /code
+    volumes:
+      - .:/code:rw
+    command: ./gradlew --no-daemon clean build
+  run:
+    build:
+      context: .
+      dockerfile: dev.dockerfile
+      target: micronaut
+    working_dir: /code
     ports:
       - "80:8080"
     volumes:
       - .:/code:rw
-    command: ./gradlew build
+    command: ./gradlew --no-daemon clean run

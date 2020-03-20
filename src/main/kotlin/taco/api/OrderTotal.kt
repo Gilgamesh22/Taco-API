@@ -1,20 +1,15 @@
 package taco.api
 
 import io.micronaut.core.annotation.Introspected
+import io.swagger.v3.oas.annotations.media.Schema
+
 import java.math.BigDecimal;
 
-@Introspected
 class OrderTotal(price: BigDecimal, quantity: Int) {
 
-    protected val price : BigDecimal = price;
+    @Schema(description="The total price of the order")
+    val price : BigDecimal = price;
 
-    protected val quantity : Int = quantity;
-    
-    fun price(): BigDecimal {
-        return this.price
-    }
-
-    fun quantity(): Int {
-        return this.quantity
-    }
+    @Schema(description="The total number of items in the order")
+    val quantity : Int = quantity;
 }

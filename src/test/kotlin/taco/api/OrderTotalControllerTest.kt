@@ -24,8 +24,16 @@ class OrderTotalControllerTest: StringSpec() {
     )
 
     init {
+        "test calling invalid endpoint" {
+            var req = HttpRequest.POST("/invalid-404", "")
+
+            val e = shouldThrow<HttpClientResponseException> { client.toBlocking().exchange(req, HttpResponse::class.java) }
+
+            e.status.code shouldBe 404
+        }
+
         "test not giving json" {
-            var req = HttpRequest.POST("/menu-total", "")
+            var req = HttpRequest.POST("/order-total", "")
 
             val e = shouldThrow<HttpClientResponseException> { client.toBlocking().exchange(req, HttpResponse::class.java) }
 
@@ -34,7 +42,7 @@ class OrderTotalControllerTest: StringSpec() {
 
         
         "test giving empty json structure" {
-            var req = HttpRequest.POST("/menu-total", "{}")
+            var req = HttpRequest.POST("/order-total", "{}")
 
             val e = shouldThrow<HttpClientResponseException> { client.toBlocking().exchange(req, HttpResponse::class.java) }
 
@@ -42,32 +50,9 @@ class OrderTotalControllerTest: StringSpec() {
         }
 
         "test Not giving name" {
-            var req = HttpRequest.POST("/menu-total", 
+            var req = HttpRequest.POST("/order-total", 
             """
             {
-                "price": 3.30
-            }
-            """)
-            val e = shouldThrow<HttpClientResponseException> { client.toBlocking().exchange(req, HttpResponse::class.java) }
-            e.status.code shouldBe 400
-        }
-
-        "test Not giving price" {
-            var req = HttpRequest.POST("/menu-total", 
-            """
-            {
-                "name": "Veggie Taco"
-            }
-            """)
-            val e = shouldThrow<HttpClientResponseException> { client.toBlocking().exchange(req, HttpResponse::class.java) }
-            e.status.code shouldBe 400
-        }
-
-        "test Not giving quantity" {
-            var req = HttpRequest.POST("/menu-total", 
-            """
-            {
-                "name": "Veggie Taco",
                 "price": 3.30
             }
             """)
@@ -76,7 +61,7 @@ class OrderTotalControllerTest: StringSpec() {
         }
 
         "test giving price with to much precision" {
-            var req = HttpRequest.POST("/menu-total", 
+            var req = HttpRequest.POST("/order-total", 
             """
             {
                 "name": "Veggie Taco",
@@ -89,7 +74,7 @@ class OrderTotalControllerTest: StringSpec() {
         }
 
         "test giving price with to much precision and string" {
-            var req = HttpRequest.POST("/menu-total", 
+            var req = HttpRequest.POST("/order-total", 
             """
             {
                 "name": "Veggie Taco",
@@ -101,22 +86,85 @@ class OrderTotalControllerTest: StringSpec() {
             e.status.code shouldBe 400
         }
 
+        "test Not giving price and quantity" {
+            var req = HttpRequest.POST("/order-total", 
+            """
+            {
+                "name": "Veggie Taco"
+            }
+            """)
+            val rsp = client.toBlocking().exchange(req, OrderTotal::class.java) 
+
+            rsp.status.code shouldBe 201
+            rsp.body() shouldNotBe null
+
+            val rspBody = rsp.body()!!
+
+            rspBody.price.compareTo(BigDecimal("0.0")) shouldBe 0
+            rspBody.quantity shouldBe 0
+        }
+
         "test to adding non required entries" {
-            var req = HttpRequest.POST("/menu-total", 
+            var req = HttpRequest.POST("/order-total", 
             """
             {
                 "name": "Veggie Taco",
-                "price": 3.3099,
+                "price": 3.30,
                 "quantity": "1",
                 "note": "extra cheese"
             }
             """)
-            val e = shouldThrow<HttpClientResponseException> { client.toBlocking().exchange(req, HttpResponse::class.java) }
-            e.status.code shouldBe 400
+            val rsp = client.toBlocking().exchange(req, OrderTotal::class.java) 
+
+            rsp.status.code shouldBe 201
+            rsp.body() shouldNotBe null
+
+            val rspBody = rsp.body()!!
+
+            rspBody.price.compareTo(BigDecimal("3.30")) shouldBe 0
+            rspBody.quantity shouldBe 1
+        }
+
+        "test Not giving quantity" {
+            var req = HttpRequest.POST("/order-total", 
+            """
+            {
+                "name": "Veggie Taco",
+                "price": 3.30
+            }
+            """)
+            val rsp = client.toBlocking().exchange(req, OrderTotal::class.java) 
+
+            rsp.status.code shouldBe 201
+            rsp.body() shouldNotBe null
+
+            val rspBody = rsp.body()!!
+
+            rspBody.price.compareTo(BigDecimal("0.0")) shouldBe 0
+            rspBody.quantity shouldBe 0
+        }
+
+        "test Not giving price" {
+            var req = HttpRequest.POST("/order-total", 
+            """
+            {
+                "name": "Veggie Taco",
+                "quantity": 3
+            }
+            """)
+            val rsp = client.toBlocking().exchange(req, OrderTotal::class.java) 
+
+            rsp.status.code shouldBe 201
+            rsp.body() shouldNotBe null
+
+            val rspBody = rsp.body()!!
+
+            rspBody.price.compareTo(BigDecimal("0.0")) shouldBe 0
+            rspBody.quantity shouldBe 3
         }
 
         "test giving quantity as string" {
-            var req = HttpRequest.POST("/menu-total", 
+            var req = HttpRequest.POST("/order-total", 
             """
             {
                 "name": "Veggie Taco",
@@ -131,12 +179,12 @@ class OrderTotalControllerTest: StringSpec() {
 
             val rspBody = rsp.body()!!
 
-            rspBody.price().compareTo(BigDecimal("3.30")) shouldBe 0
-            rspBody.quantity() shouldBe 1
+            rspBody.price.compareTo(BigDecimal("3.30")) shouldBe 0
+            rspBody.quantity shouldBe 1
         }
 
         "test giving price as int" {
-            var req = HttpRequest.POST("/menu-total", 
+            var req = HttpRequest.POST("/order-total", 
             """
             {
                 "name": "Veggie Taco",
@@ -151,12 +199,12 @@ class OrderTotalControllerTest: StringSpec() {
 
             val rspBody = rsp.body()!!
 
-            rspBody.price().compareTo(BigDecimal("3.00")) shouldBe 0
-            rspBody.quantity() shouldBe 1
+            rspBody.price.compareTo(BigDecimal("3.00")) shouldBe 0
+            rspBody.quantity shouldBe 1
         }
 
         "test giving price as string" {
-            var req = HttpRequest.POST("/menu-total", 
+            var req = HttpRequest.POST("/order-total", 
             """
             {
                 "name": "Veggie Taco",
@@ -171,12 +219,12 @@ class OrderTotalControllerTest: StringSpec() {
 
             val rspBody = rsp.body()!!
 
-            rspBody.price().compareTo(BigDecimal("3.30")) shouldBe 0
-            rspBody.quantity() shouldBe 1
+            rspBody.price.compareTo(BigDecimal("3.30")) shouldBe 0
+            rspBody.quantity shouldBe 1
         }
 
         "test multiple quantities of one taco" {
-            var req = HttpRequest.POST("/menu-total", 
+            var req = HttpRequest.POST("/order-total", 
             """
             {
                 "name": "Veggie Taco",
@@ -191,12 +239,12 @@ class OrderTotalControllerTest: StringSpec() {
 
             val rspBody = rsp.body()!!
 
-            rspBody.price().compareTo(BigDecimal("6.60")) shouldBe 0
-            rspBody.quantity() shouldBe 2
+            rspBody.price.compareTo(BigDecimal("6.60")) shouldBe 0
+            rspBody.quantity shouldBe 2
         }
 
         "test multiple types of tacos" {
-            var req = HttpRequest.POST("/menu-total", 
+            var req = HttpRequest.POST("/order-total", 
             """
             [
                 {
@@ -218,12 +266,12 @@ class OrderTotalControllerTest: StringSpec() {
 
             val rspBody = rsp.body()!!
 
-            rspBody.price().compareTo(BigDecimal("7.50")) shouldBe 0
-            rspBody.quantity() shouldBe 2
+            rspBody.price.compareTo(BigDecimal("7.50")) shouldBe 0
+            rspBody.quantity shouldBe 2
         }
 
         "test 2 types of tacos with one of them having quantity 2" {
-            var req = HttpRequest.POST("/menu-total", 
+            var req = HttpRequest.POST("/order-total", 
             """
             [
                 {
@@ -245,12 +293,12 @@ class OrderTotalControllerTest: StringSpec() {
 
             val rspBody = rsp.body()!!
 
-            rspBody.price().compareTo(BigDecimal("9.90")) shouldBe 0
-            rspBody.quantity() shouldBe 3
+            rspBody.price.compareTo(BigDecimal("9.90")) shouldBe 0
+            rspBody.quantity shouldBe 3
         }
 
         "test the 20% discount when purchasing 4 items of the same thing" {
-            var req = HttpRequest.POST("/menu-total", 
+            var req = HttpRequest.POST("/order-total", 
             """
             [
                 {
@@ -267,12 +315,12 @@ class OrderTotalControllerTest: StringSpec() {
 
             val rspBody = rsp.body()!!
 
-            rspBody.price().compareTo(BigDecimal("10.56")) shouldBe 0
-            rspBody.quantity() shouldBe 4
+            rspBody.price.compareTo(BigDecimal("10.56")) shouldBe 0
+            rspBody.quantity shouldBe 4
         }
 
         "test the 20% discount when purchasing 100 of the same thing" {
-            var req = HttpRequest.POST("/menu-total", 
+            var req = HttpRequest.POST("/order-total", 
             """
             [
                 {
@@ -289,8 +337,8 @@ class OrderTotalControllerTest: StringSpec() {
 
             val rspBody = rsp.body()!!
 
-            rspBody.price().compareTo(BigDecimal("264.00")) shouldBe 0
-            rspBody.quantity() shouldBe 100
+            rspBody.price.compareTo(BigDecimal("264.00")) shouldBe 0
+            rspBody.quantity shouldBe 100
         }
     }
 }
