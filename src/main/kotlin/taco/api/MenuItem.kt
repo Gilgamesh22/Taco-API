@@ -8,7 +8,7 @@ import javax.validation.constraints.Digits
 import javax.validation.constraints.NotBlank
 import javax.validation.constraints.NotEmpty
 import javax.validation.constraints.NotNull
-import javax.validation.constraints.*
+import javax.validation.constraints.Min
 
 import io.swagger.v3.oas.annotations.media.Schema
 
@@ -24,8 +24,10 @@ open class MenuItem {
     @NotNull(message = "Please enter price")
     @Schema(description="The price of the menu item")
     @Digits(integer=10, fraction=2)
+    @Min(0)
     val price : BigDecimal = BigDecimal("0.0");
 
+    @Min(0)
     @NotNull(message = "Please enter the quantity")
     @Schema(description="The quantity the user would like to purchase")
     val quantity : Int = 0;

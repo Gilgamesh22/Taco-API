@@ -86,6 +86,32 @@ class OrderTotalControllerTest: StringSpec() {
             e.status.code shouldBe 400
         }
 
+        "test  giving negative quantity" {
+            var req = HttpRequest.POST("/order-total", 
+            """
+            {
+                "name": "Veggie Taco",
+                "price": 3.30,
+                "quantity": -1
+            }
+            """)
+            val e = shouldThrow<HttpClientResponseException> { client.toBlocking().exchange(req, HttpResponse::class.java) }
+            e.status.code shouldBe 400
+        }
+
+        "test giving negative price" {
+            var req = HttpRequest.POST("/order-total", 
+            """
+            {
+                "name": "Veggie Taco",
+                "price": -3.30,
+                "quantity": 1
+            }
+            """)
+            val e = shouldThrow<HttpClientResponseException> { client.toBlocking().exchange(req, HttpResponse::class.java) }
+            e.status.code shouldBe 400
+        }
+
         "test Not giving price and quantity" {
             var req = HttpRequest.POST("/order-total", 
             """
