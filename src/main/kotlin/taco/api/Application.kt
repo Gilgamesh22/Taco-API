@@ -8,7 +8,7 @@ import io.swagger.v3.oas.annotations.info.*
 @OpenAPIDefinition(
     info = Info(
         title = "Taco API",
-        version = "1.0.1",
+        version = "1.0.2",
         description = "This API allows you to calculate and order total cost from a given set of menu items",
         license = License(name = "Apache 2.0", url = ""),
         contact = Contact(url = "", name = "Zaid", email = "ZNackasha@gmail.com")
